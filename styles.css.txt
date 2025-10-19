@@ -1,0 +1,304 @@
+/* --- VARIABLES ET STYLES GLOBALES --- */
+:root {
+    --color-primary: #0A1931; /* Bleu Profond/Confiance */
+    --color-secondary: #007bff; /* Bleu Clair pour les titres */
+    --color-accent: #FF7F3F; /* Orange Énergie/Action */
+    --color-background: #f8f9fa;
+    --color-success: #28a745;
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-background);
+    color: #333;
+    line-height: 1.6;
+}
+.container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+/* --- EN-TÊTE (Header) --- */
+header {
+    background: linear-gradient(135deg, var(--color-primary) 0%, #004c99 100%);
+    color: white;
+    padding: 60px 20px 100px; /* Plus d'espace pour la carte */
+    text-align: center;
+}
+header h1 { 
+    font-size: 2.8em; 
+    margin-bottom: 5px; 
+    font-weight: 700; 
+}
+header p { 
+    font-size: 1.2em; 
+    margin-top: 0; 
+    opacity: 0.9; 
+    font-weight: 300; 
+}
+.reassurance-bar {
+    background-color: var(--color-accent);
+    color: white;
+    padding: 10px 0;
+    font-weight: 600;
+    margin-top: 20px;
+    border-radius: 5px;
+    display: inline-block;
+    padding: 10px 30px;
+}
+
+/* --- SIMULATEUR CARTE (Principal) --- */
+#simulateur {
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-light);
+    margin-top: -70px; /* Remonte sur le header */
+    position: relative;
+    z-index: 10;
+}
+.step-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    color: var(--color-secondary);
+}
+.step-header i {
+    font-size: 1.8em;
+    margin-right: 15px;
+    color: var(--color-accent);
+}
+.step-header h2 { 
+    font-size: 1.6em; 
+    margin: 0; 
+    color: var(--color-primary);
+}
+.form-step { display: none; }
+.form-step.active { display: block; }
+
+/* --- PROGRESSION BARRE --- */
+.progress-bar { 
+    height: 10px; 
+    background-color: #e9ecef; 
+    border-radius: 5px; 
+    margin-bottom: 30px; 
+    overflow: hidden;
+}
+.progress-indicator { 
+    height: 100%; 
+    background-color: var(--color-accent); 
+    transition: width 0.4s ease-in-out; 
+}
+
+/* --- CHAMPS DE FORMULAIRE --- */
+label { 
+    display: block; 
+    margin-top: 20px; 
+    margin-bottom: 8px; 
+    font-weight: 600; 
+    color: var(--color-primary);
+    font-size: 0.95em;
+}
+input:not([type="radio"]):not([type="checkbox"]), select {
+    width: 100%; 
+    padding: 14px; 
+    margin-bottom: 15px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1em;
+    transition: all 0.3s;
+}
+input:focus, select:focus {
+    border-color: var(--color-accent);
+    outline: none;
+    box-shadow: 0 0 8px rgba(255, 127, 63, 0.2);
+}
+
+/* Options radio/check (Carte de sélection) */
+.radio-group { 
+    display: flex; 
+    gap: 20px; 
+    margin-top: 20px; 
+}
+.radio-group input[type="radio"] { display: none; }
+.radio-group label {
+    flex-basis: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f0f4f7;
+    padding: 30px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    font-weight: 600;
+    transition: all 0.3s;
+    margin: 0; /* Annule le margin-top du label général */
+    text-align: center;
+}
+.radio-group label i {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    color: var(--color-primary);
+}
+.radio-group input[type="radio"]:checked + label {
+    background-color: #ffe0c2; /* Orange très clair */
+    border-color: var(--color-accent);
+    box-shadow: 0 0 15px rgba(255, 127, 63, 0.4);
+    color: var(--color-primary);
+}
+.radio-group label:hover {
+    background-color: #e9f0f5;
+}
+
+.two-cols { 
+    display: flex; 
+    gap: 30px; 
+}
+.two-cols > div { 
+    flex: 1; 
+}
+
+/* --- BOUTONS --- */
+.btn-action, .btn-secondary {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-top: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    text-align: center;
+    border: none;
+}
+
+.btn-action {
+    background-color: var(--color-accent);
+    color: white;
+    box-shadow: 0 5px 15px rgba(255, 127, 63, 0.3);
+}
+.btn-action:hover {
+    background-color: #ff6a22; /* Orange plus foncé */
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background-color: #e9ecef;
+    color: #6c757d;
+    margin-top: 15px;
+}
+.btn-secondary:hover {
+    background-color: #dee2e6;
+    color: #495057;
+}
+
+/* --- MESSAGES DYNAMIQUES & RÉSULTATS --- */
+.info-box { 
+    background-color: #e3f2fd; 
+    border-left: 5px solid var(--color-secondary); 
+    padding: 15px; 
+    margin-bottom: 20px; 
+    border-radius: 6px; 
+    font-size: 0.95em;
+}
+.result-box {
+    background-color: #e8f5e9;
+    border: 2px solid var(--color-success);
+    padding: 30px;
+    border-radius: 10px;
+    margin-top: 25px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(40, 167, 69, 0.1);
+}
+.result-box h3 { 
+    color: var(--color-success); 
+    margin-top: 0; 
+    font-size: 1.6em; 
+    font-weight: 700; 
+}
+.economy-highlight, .success-economy-highlight {
+    font-size: 2.5em;
+    color: var(--color-accent);
+    font-weight: 700;
+    display: block;
+    margin: 10px 0;
+    animation: pulse 1s infinite alternate;
+}
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.03); }
+}
+
+.success-message-container { 
+    text-align: center;
+    padding: 50px 20px;
+    border: 2px solid var(--color-success);
+    border-radius: 12px;
+    background-color: #f1fff3;
+    font-size: 1.2em;
+    color: var(--color-primary);
+}
+.success-message-container .contact-info {
+    font-size: 1em;
+    color: #555;
+    margin-top: 25px;
+}
+.success-message-container strong {
+    color: var(--color-accent);
+    font-weight: 700;
+}
+
+/* --- SECTION AVANTAGES / FOOTER --- */
+#avantages {
+    margin-top: 50px;
+    padding: 40px 0;
+    border-top: 1px solid #eee;
+    text-align: center;
+}
+#avantages h3 {
+    color: var(--color-primary);
+    font-size: 1.8em;
+    margin-bottom: 30px;
+}
+.avantage-grid {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+}
+.avantage-item {
+    flex-basis: 30%;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: var(--shadow-light);
+    text-align: center;
+}
+.avantage-item i {
+    font-size: 2.5em;
+    color: var(--color-accent);
+    margin-bottom: 10px;
+}
+.avantage-item p {
+    margin: 0;
+    font-weight: 500;
+}
+
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    header h1 { font-size: 2em; }
+    header p { font-size: 1em; }
+    #simulateur { padding: 30px 20px; }
+    .radio-group, .two-cols, .avantage-grid { 
+        flex-direction: column; 
+        gap: 15px; 
+    }
+    .radio-group label { 
+        flex-basis: 100%; 
+        padding: 20px;
+    }
+    .step-header h2 { font-size: 1.4em; }
+}

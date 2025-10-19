@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Express Assurance Emprunteur - Devis Gratuit & Loi Lemoine</title>
+    <meta name="description" content="Simulateur d'assurance emprunteur. Calculez vos économies Loi Lemoine ou obtenez un devis pour un nouveau prêt. Réponse garantie sous 2h.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css"> 
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-calculator"></i> Simulation Express Assurance Emprunteur</h1>
+            <p>Obtenez instantanément une estimation professionnelle et détaillée, conforme à la Loi Lemoine.</p>
+            <div class="reassurance-bar">
+                <i class="fas fa-bolt"></i> Devis Garanti sous 2h | Économies Moyennes : 15 000 €
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section id="simulateur">
+            <div class="progress-bar"><div id="progressIndicator" class="progress-indicator" style="width: 20%;"></div></div>
+
+            <form id="leadForm" action="https://formspree.io/f/xdkwbzyy" method="POST">
+                
+                <input type="hidden" id="subjectInput" name="_subject" value="NOUVEAU LEAD EXPERT - SIMULATION ASSURANCE EMPRUNTEUR">
+                <input type="hidden" id="economieTotaleInput" name="5_Economie_Totale_Estimee" value="">
+                
+                <div class="form-step active" data-step="1">
+                    <div class="step-header">
+                        <i class="fas fa-rocket"></i>
+                        <h2>1. Votre Objectif Principal</h2>
+                    </div>
+                    
+                    <p style="font-weight: 600; text-align: center;">Voulez-vous changer d'assurance ou assurer un nouveau prêt ?</p>
+                    
+                    <div class="radio-group">
+                        <input type="radio" id="type_projet_changement" name="0_Type_Projet" value="Changement Assurance (Loi Lemoine)" required>
+                        <label for="type_projet_changement">
+                            <i class="fas fa-redo-alt"></i>
+                            Changer d'Assurance
+                            <span style="font-size:0.8em; font-weight: 400; opacity: 0.8;">(Loi Lemoine / Économies)</span>
+                        </label>
+
+                        <input type="radio" id="type_projet_nouveau" name="0_Type_Projet" value="Nouveau Prêt (Acquisition)" required>
+                        <label for="type_projet_nouveau">
+                            <i class="fas fa-home"></i>
+                            Nouveau Prêt
+                            <span style="font-size:0.8em; font-weight: 400; opacity: 0.8;">(Achat / Première Assurance)</span>
+                        </label>
+                    </div>
+
+                    <button type="button" class="btn-action" onclick="goToStep2()">Continuer vers les détails</button>
+                </div>
+
+                <div class="form-step" data-step="2">
+                    <div class="step-header">
+                        <i class="fas fa-hand-holding-usd"></i>
+                        <h2>2. Détails de votre Financement</h2>
+                    </div>
+                    
+                    <div id="section_nouveau_pret" style="display: block;">
+                        <label for="montant"><i class="fas fa-piggy-bank"></i> Montant total du prêt à assurer (€)</label>
+                        <input type="text" id="montant" name="1_Montant_Emprunt" placeholder="Ex: 250000" required>
+                        
+                        <div class="two-cols">
+                            <div>
+                                <label for="duree"><i class="fas fa-clock"></i> Durée totale du prêt (années)</label>
+                                <select id="duree" name="1_Duree_Pret" required>
+                                    <option value="">Sélectionnez</option>
+                                    <option value="10">10 ans</option>
+                                    <option value="15">15 ans</option>
+                                    <option value="20">20 ans</option>
+                                    <option value="25">25 ans</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="taux_pret"><i class="fas fa-percent"></i> Taux d'intérêt du prêt (%)</label>
+                                <input type="text" id="taux_pret" name="1_Taux_Interet_Pret" placeholder="Ex: 3.5" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="section_changement" style="display:none;">
+                        <h3 style="color: var(--color-accent); border-bottom: 1px solid #eee; padding-bottom: 10px;">Informations de votre prêt actuel</h3>
+                        <label for="crd"><i class="fas fa-money-check-alt"></i> Capital Restant Dû (CRD en €)</label>
+                        <input type="text" id="crd" name="1_Capital_Restant_Du" placeholder="Ex: 180000" required> 
+
+                        <label for="mensualite_actuelle"><i class="fas fa-file-invoice-dollar"></i> Mensualité d'assurance actuelle (€)</label>
+                        <input type="text" id="mensualite_actuelle" name="1_Mensualite_Assurance_Actuelle" placeholder="Ex: 45.50" required>
+                        
+                        <div class="two-cols">
+                            <div>
+                                <label for="duree_restante"><i class="fas fa-calendar-alt"></i> Durée restante (années)</label>
+                                <select id="duree_restante" name="1_Duree_Restante" required>
+                                    <option value="">Sélectionnez</option>
+                                    <option value="5">5 ans</option>
+                                    <option value="10">10 ans</option>
+                                    <option value="15">15 ans</option>
+                                    <option value="20">20 ans</option>
+                                    <option value="25">25 ans et +</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="date_fin_credit"><i class="fas fa-calendar-times"></i> Date de fin du crédit</label>
+                                <input type="date" id="date_fin_credit" name="1_Date_Fin_Credit" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-action" onclick="nextStep(3)">Continuer (Profil)</button>
+                    <button type="button" class="btn-secondary" onclick="prevStep(1)">Précédent</button>
+                </div>
+
+                <div class="form-step" data-step="3">
+                    <div class="step-header">
+                        <i class="fas fa-user-circle"></i>
+                        <h2>3. Votre Profil et Situation</h2>
+                    </div>
+                    <div class="two-cols">
+                        <div>
+                            <label for="naissance"><i class="fas fa-birthday-cake"></i> Date de Naissance</label>
+                            <input type="date" id="naissance" name="2_Date_Naissance" required>
+                        </div>
+                        <div>
+                            <label for="fumeur"><i class="fas fa-smoking-ban"></i> Statut Fumeur</label>
+                            <select id="fumeur" name="2_Statut_Fumeur" required>
+                                <option value="">Sélectionnez</option>
+                                <option value="non">Non-fumeur</option>
+                                <option value="oui">Fumeur</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <label for="situation_familiale"><i class="fas fa-users"></i> Situation familiale</label>
+                    <select id="situation_familiale" name="2_Situation_Familiale" required>
+                        <option value="">Sélectionnez</option>
+                        <option value="seul">Seul(e)</option>
+                        <option value="couple">En Couple (co-emprunteur ?)</option>
+                    </select>
+                    
+                    <label for="profession"><i class="fas fa-briefcase"></i> Catégorie Professionnelle</label>
+                    <select id="profession" name="2_Profession" required>
+                        <option value="">Sélectionnez</option>
+                        <option value="classique">Cadre / Employé (Bureau)</option>
+                        <option value="liberal">Profession Libérale / Indépendant</option>
+                        <option value="risque_standard">Métier à risque (Prof. Médical, Enseignement)</option>
+                        <option value="risque_aggrave">Métier à haut risque (BTP, Sécurité, Pompier, Armée)</option>
+                    </select>
+
+                    <button type="button" class="btn-action" onclick="nextStep(4)">Continuer (Garanties)</button>
+                    <button type="button" class="btn-secondary" onclick="prevStep(2)">Précédent</button>
+                </div>
+
+                <div class="form-step" data-step="4">
+                    <div class="step-header">
+                        <i class="fas fa-shield-alt"></i>
+                        <h2>4. Garanties Souhaitées et Santé</h2>
+                    </div>
+
+                    <label for="couverture_souhaitee"><i class="fas fa-chart-pie"></i> Couverture (quotité) souhaitée</label>
+                    <select id="couverture_souhaitee" name="3_Couverture_Souhaitee" required>
+                        <option value="100">100 % (Seul ou 50/50 pour un couple)</option>
+                        <option value="150">150 % (Couple : 100% sur une tête, 50% sur l'autre)</option>
+                        <option value="200">200 % (Couple : 100% sur chaque tête)</option>
+                        <option value="autre">Autre (préciser lors de l'appel)</option>
+                    </select>
+                    <div class="info-box" style="margin-top: 10px;">
+                        <small><i class="fas fa-info-circle"></i> Conseil : Pour une sécurité maximale en couple, 200% est souvent recommandé.</small>
+                    </div>
+
+                    <label for="maladie"><i class="fas fa-heartbeat"></i> Antécédents de santé (Risque aggravé)</label>
+                    <select id="maladie" name="3_Risque_Aggrave" required>
+                        <option value="non">Non, pas de suivi particulier</option>
+                        <option value="oui_leger">Oui, suivi mais sans hospitalisation récente</option>
+                        <option value="oui_moyen">Oui, traitement médical en cours ou historique lourd</option>
+                        <option value="aerast">Oui, maladie grave (Expertise AERAS requise - Priorité d'appel)</option>
+                    </select>
+                    
+                    <label for="sport"><i class="fas fa-running"></i> Pratiquez-vous un sport à risque ?</label>
+                    <select id="sport" name="3_Sport_Risque" required>
+                        <option value="non">Non / Sport Classique</option>
+                        <option value="oui">Oui (Plongée, Alpinisme, Sports de combat, etc.)</option>
+                    </select>
+
+                    <button type="button" class="btn-action" onclick="nextStep(5); calculateApproximatePremium();">Découvrir mon Estimation Détaillée</button>
+                    <button type="button" class="btn-secondary" onclick="prevStep(3)">Précédent</button>
+                </div>
+
+                <div class="form-step" data-step="5">
+                    <div class="step-header">
+                        <i class="fas fa-paper-plane"></i>
+                        <h2>5. Estimation et Contact Prioritaire</h2>
+                    </div>
+                    
+                    <div id="resultBox" class="result-box">
+                        <h3>Calcul en cours...</h3>
+                    </div>
+
+                    <div class="two-cols">
+                        <div>
+                            <label for="prenom"><i class="fas fa-user"></i> Prénom</label>
+                            <input type="text" id="prenom" name="4_Prenom" required>
+                        </div>
+                        <div>
+                            <label for="nom"><i class="fas fa-user"></i> Nom</label>
+                            <input type="text" id="nom" name="4_Nom" required>
+                        </div>
+                    </div>
+                    
+                    <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="email" name="_replyto" required placeholder="Votre email pour l'envoi de l'offre">
+
+                    <label for="telephone"><i class="fas fa-phone-alt"></i> Téléphone (Essentiel pour finaliser le devis)</label>
+                    <input type="tel" id="telephone" name="4_Telephone" required>
+                    
+                    <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
+                        <p style="text-align: center; font-size: 0.9em; color: #555;"><i class="fas fa-lock"></i> Vos données sont protégées par le RGPD. Traitement sous 2h.</p>
+                    </div>
+
+                    <label style="font-weight: normal; font-size: 0.9em; display: flex; align-items: center; margin-top: 15px;">
+                        <input type="checkbox" name="ConsentementRGPD" value="oui" required style="width: auto; margin-right: 10px;">
+                        J'accepte d'être recontacté(e) pour recevoir mon offre personnalisée et les communications associées.
+                    </label>
+
+                    <button type="submit" class="btn-action">J'ENVOIE MON DEVIS PRIORITAIRE</button>
+                    <button type="button" class="btn-secondary" onclick="prevStep(4)">Précédent</button>
+
+                </div>
+            </form>
+        </section>
+        
+        <section id="avantages" class="container">
+            <h3>Pourquoi choisir notre expertise ?</h3>
+            <div class="avantage-grid">
+                <div class="avantage-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h4>Économie Garantie</h4>
+                    <p>Jusqu'à 60% moins cher que votre banque.</p>
+                </div>
+                <div class="avantage-item">
+                    <i class="fas fa-gavel"></i>
+                    <h4>Conformité Loi Lemoine</h4>
+                    <p>Changement simple et sans frais à tout moment.</p>
+                </div>
+                <div class="avantage-item">
+                    <i class="fas fa-user-tie"></i>
+                    <h4>Conseiller Dédié</h4>
+                    <p>Un expert unique du début à la fin de votre projet.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

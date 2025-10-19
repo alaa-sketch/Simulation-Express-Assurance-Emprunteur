@@ -1,0 +1,206 @@
+let currentStep = 1;
+const totalSteps = 5;
+const formSteps = document.querySelectorAll('.form-step');
+const progressBar = document.getElementById('progressIndicator');
+const form = document.getElementById('leadForm');
+let totalEconomyCalculated = 0; 
+
+document.addEventListener('DOMContentLoaded', updateSteps);
+
+function updateSteps() {
+    formSteps.forEach(step => {
+        step.classList.remove('active');
+    });
+    const activeStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+    if (activeStepElement) {
+        activeStepElement.classList.add('active');
+    }
+    const progress = (currentStep / totalSteps) * 100;
+    progressBar.style.width = `${progress}%`;
+}
+
+function nextStep(stepNumber) {
+    // Optionnel : Ajouter une validation basique ici si vous le souhaitez
+    currentStep = stepNumber;
+    updateSteps();
+}
+function prevStep(stepNumber) {
+    currentStep = stepNumber;
+    updateSteps();
+}
+
+function goToStep2() {
+    const projetType = document.querySelector('input[name="0_Type_Projet"]:checked');
+    if (!projetType) {
+        alert("Veuillez sélectionner le type de projet.");
+        return;
+    }
+
+    const isChangement = projetType.value === "Changement Assurance (Loi Lemoine)";
+    const crdInput = document.getElementById('crd');
+    const mensualiteInput = document.getElementById('mensualite_actuelle');
+    const dureeRestante = document.getElementById('duree_restante');
+    const dateFinCredit = document.getElementById('date_fin_credit');
+    const montant = document.getElementById('montant');
+    const duree = document.getElementById('duree');
+    const taux_pret = document.getElementById('taux_pret');
+
+    // Afficher/Masquer les sections basées sur le choix
+    document.getElementById('section_changement').style.display = isChangement ? 'block' : 'none';
+    document.getElementById('section_nouveau_pret').style.display = isChangement ? 'none' : 'block';
+
+    // Gérer 'required' pour Changement
+    crdInput.required = isChangement;
+    mensualiteInput.required = isChangement;
+    dureeRestante.required = isChangement;
+    dateFinCredit.required = isChangement;
+    
+    // Gérer 'required' pour Nouveau Prêt
+    montant.required = !isChangement;
+    duree.required = !isChangement;
+    taux_pret.required = !isChangement;
+    
+    // Mettre à jour le sujet du mail Formspree
+    document.getElementById('subjectInput').value = `NOUVEAU LEAD EXPERT - ${projetType.value}`;
+
+    nextStep(2);
+}
+
+function getAge(dateString) {
+    const today = new Date();
+    const birthDate = new Date(dateString);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+}
+
+const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    }).format(amount).replace('€', '').trim() + ' €';
+};
+
+const formatEuroMensuel = (amount) => {
+    // Utiliser toLocaleString pour un meilleur formatage des décimales
+    return amount.toFixed(2).replace('.', ',') + ' €';
+};
+
+function calculateApproximatePremium() {
+    const projetType = document.querySelector('input[name="0_Type_Projet"]:checked').value;
+    const isChangement = projetType === "Changement Assurance (Loi Lemoine)";
+    
+    let montantAssure = 0;
+    let dureeAssurance = 0;
+    let tauxBancaireMoyen = 0.0035; // Taux d'assurance moyen de la banque (pour référence)
+    let mensualiteActuelle = 0;
+
+    if (isChangement) {
+        // Pour le changement d'assurance (CRD et Durée Restante)
+        // Nettoyage des espaces pour le parsing
+        montantAssure = parseFloat(document.getElementById('crd').value.replace(/\s/g, '').replace(',', '.')) || 0;
+        dureeAssurance = parseInt(document.getElementById('duree_restante').value) || 0;
+        mensualiteActuelle = parseFloat(document.getElementById('mensualite_actuelle').value.replace(/\s/g, '').replace(',', '.')) || 0;
+
+    } else {
+        // Pour le nouveau prêt (Montant initial et Durée Totale)
+        montantAssure = parseFloat(document.getElementById('montant').value.replace(/\s/g, '').replace(',', '.')) || 0;
+        dureeAssurance = parseInt(document.getElementById('duree').value) || 0;
+        // Calculer la prime de la banque pour comparaison
+        mensualiteActuelle = (montantAssure * tauxBancaireMoyen) / 12;
+    }
+
+    const naissanceDate = document.getElementById('naissance').value;
+    const fumeur = document.getElementById('fumeur').value;
+    const profession = document.getElementById('profession').value;
+    const couverture = parseInt(document.getElementById('couverture_souhaitee').value) || 100;
+    const risqueSante = document.getElementById('maladie').value;
+    const sportRisque = document.getElementById('sport').value;
+    const resultBox = document.getElementById('resultBox');
+
+    if (montantAssure === 0 || dureeAssurance === 0 || !naissanceDate || isNaN(montantAssure) || (isChangement && mensualiteActuelle === 0)) {
+        resultBox.innerHTML = `
+            <h3>Données Manquantes</h3>
+            <p>Veuillez vérifier que tous les détails du prêt et de votre profil sont correctement renseignés.</p>
+        `;
+        totalEconomyCalculated = 0;
+        document.getElementById('economieTotaleInput').value = 0;
+        return;
+    }
+
+    const age = getAge(naissanceDate);
+    let tauxAnnuelIndicatif = 0.0010; // Taux de base optimisé
+
+    // --- 1. Ajustement par âge ---
+    if (age >= 35 && age < 45) { tauxAnnuelIndicatif += 0.0005; }
+    else if (age >= 45 && age < 55) { tauxAnnuelIndicatif += 0.0010; }
+    else if (age >= 55) { tauxAnnuelIndicatif += 0.0020; }
+
+    // --- 2. Ajustement par statut Fumeur et Profession ---
+    if (fumeur === 'oui') { tauxAnnuelIndicatif += 0.0010; }
+    if (profession === 'risque_standard') { tauxAnnuelIndicatif += 0.0005; }
+    else if (profession === 'risque_aggrave') { tauxAnnuelIndicatif += 0.0015; }
+    
+    // --- 3. Ajustement par Risque Santé/Sport ---
+    if (risqueSante !== 'non') { tauxAnnuelIndicatif += 0.0015; }
+    if (sportRisque === 'oui') { tauxAnnuelIndicatif += 0.0005; }
+    
+    // Application de la couverture (Quotité) : 100%, 150%, 200%
+    tauxAnnuelIndicatif = tauxAnnuelIndicatif * (couverture / 100);
+
+    // ***************** CALCUL FINAL *****************
+    
+    const primeMensuelleEstimee = (montantAssure * tauxAnnuelIndicatif) / 12;
+
+    let totalEconomyMessage = '';
+    let mensualityMessage = '';
+
+    if (isChangement) {
+        // SCENARIO 1 : CHANGEMENT D'ASSURANCE (Loi Lemoine)
+        const economieMensuelle = mensualiteActuelle - primeMensuelleEstimee;
+        const totalRestantMois = dureeAssurance * 12;
+        const economieTotale = economieMensuelle * totalRestantMois;
+        
+        totalEconomyCalculated = Math.max(0, Math.round(economieTotale));
+
+        mensualityMessage = `Votre nouvelle mensualité estimée : ${formatEuroMensuel(primeMensuelleEstimee)}`;
+        totalEconomyMessage = `
+            <h3>Félicitations !</h3>
+            <p>Votre économie potentielle sur la durée restante est de :</p>
+            <span class="economy-highlight">${formatCurrency(totalEconomyCalculated)}</span>
+            <p>${mensualityMessage} (vs. ${formatEuroMensuel(mensualiteActuelle)} actuellement).</p>
+        `;
+
+    } else {
+        // SCENARIO 2 : NOUVEAU PRÊT
+        const primeMensuelleBanque = (montantAssure * tauxBancaireMoyen) / 12;
+        const economieMensuelle = primeMensuelleBanque - primeMensuelleEstimee;
+        const totalMois = dureeAssurance * 12;
+        const economieTotale = economieMensuelle * totalMois;
+        
+        totalEconomyCalculated = Math.max(0, Math.round(economieTotale));
+
+        mensualityMessage = `Votre mensualité estimée avec un assureur externe : ${formatEuroMensuel(primeMensuelleEstimee)}`;
+        totalEconomyMessage = `
+            <h3>Économie Maximale Estimée</h3>
+            <p>En choisissant une assurance externe, vous économiserez environ :</p>
+            <span class="economy-highlight">${formatCurrency(totalEconomyCalculated)}</span>
+            <p>par rapport à l'offre moyenne de votre banque. <br>${mensualityMessage}</p>
+        `;
+    }
+    
+    // Afficher le résultat et mettre à jour le champ caché pour Formspree
+    resultBox.innerHTML = totalEconomyMessage;
+    document.getElementById('economieTotaleInput').value = totalEconomyCalculated;
+}
+
+// Rendre les fonctions globales pour qu'elles puissent être appelées depuis le HTML (onclick)
+window.nextStep = nextStep;
+window.prevStep = prevStep;
+window.goToStep2 = goToStep2;
+window.calculateApproximatePremium = calculateApproximatePremium;
